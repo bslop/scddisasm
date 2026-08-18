@@ -41,7 +41,19 @@ oYVel		rs.l	1			; Y velocity
 ; Variables
 ; -------------------------------------------------------------------------
 
+	if JAGUAR
+
+	rsset	WORKRAM+$8000		; == WORKRAM+$FF008000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF008000
+
+	endif
 VARSSTART	rs.b	0
 
 		rs.b	$5000

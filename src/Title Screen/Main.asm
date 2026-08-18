@@ -39,7 +39,19 @@ oSize		rs.b	0			; Size of structure
 ; Variables
 ; -------------------------------------------------------------------------
 
+	if JAGUAR
+
+	rsset	WORKRAM+$A000		; == WORKRAM+$FF00A000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF00A000
+
+	endif
 VARSSTART	rs.b	0			; Start of variables
 cloudsImage	rs.b	IMGLENGTH		; Clouds image buffer
 hscroll		rs.b	$380			; Horizontal scroll buffer

@@ -8,7 +8,19 @@
 ; Variables
 ; -------------------------------------------------------------------------
 
+	if JAGUAR
+
+	rsset	WORKRAM+$8000		; == WORKRAM+$FF008000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF008000
+
+	endif
 VARSSTART	rs.b	0			; Start of variables
 		rs.b	$4000
 nemBuffer	rs.b	$200			; Nemesis decompression buffer

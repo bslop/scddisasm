@@ -24,7 +24,19 @@ IMGV1LEN	EQU	$2000			; Part 1 length
 ; Variables
 ; -------------------------------------------------------------------------
 
+	if JAGUAR
+
+	rsset	WORKRAM+$B000		; == WORKRAM+$FF00B000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF00B000
+
+	endif
 VARSSTART	rs.b	0			; Start of variables
 stageImage	rs.b	IMGLENGTH		; Stage image buffer
 sprites		rs.b	80*8			; Sprite buffer

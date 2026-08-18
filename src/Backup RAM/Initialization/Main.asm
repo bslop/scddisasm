@@ -15,7 +15,19 @@
 ; Variables
 ; -------------------------------------------------------------------------
 
+	if JAGUAR
+
+	rsset	WORKRAM+$A000		; == WORKRAM+$FF00A000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF00A000
+
+	endif
 VARSSTART	rs.b	0			; Start of variables
 decompBuffer	rs.b	$2D00			; Decompression buffer
 vsyncFlag	rs.b	1			; VSync flag

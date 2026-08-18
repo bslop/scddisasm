@@ -13,7 +13,19 @@
 ; Variables
 ; -------------------------------------------------------------------------
 
+	if JAGUAR
+
+	rsset	WORKRAM+$8000		; == WORKRAM+$FF008000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF008000
+
+	endif
 VARSSTART	rs.b	0			; Start of variables
 frameDMA	rs.b	12			; Frame DMA info
 		rs.b	$3FF4
@@ -29,7 +41,19 @@ palFadeDelay	rs.w	1			; Palette fade delay
 palFadeCount	rs.w	1			; Palette fade counter
 updateBorderPal	rs.b	1			; Update border palette flag
 		
+	if JAGUAR
+		
+	rsset	WORKRAM+$FA00		; == WORKRAM+$FF00FA00 in 24 bits,
+		
+						; without the $FF prefix that would
+		
+						; otherwise reach an `org`
+		
+	else
+		
 	rsset	WORKRAM+$FF00FA00
+		
+	endif
 vsyncFlag	rs.b	1			; VSync flag
 		rs.b	$3F
 vintRoutine	rs.w	1			; V-INT routine ID

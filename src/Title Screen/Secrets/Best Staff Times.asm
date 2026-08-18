@@ -510,6 +510,8 @@ Map_SelScreenBg:
 
 ; -------------------------------------------------------------------------
 
-	dcb.b	$FF6000-*, 0
+	dcb.b	WORKRAM+$6000-*, 0		; (was $FF6000; WORKRAM-relative so it
+					; follows the Jaguar rebase -- as a literal it
+					; padded the file out by 15 MB)
 
 ; -------------------------------------------------------------------------

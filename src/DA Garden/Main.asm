@@ -66,7 +66,19 @@ trkSelSize	rs.b	0			; Size of structure
 ; Variables
 ; -------------------------------------------------------------------------
 
+	if JAGUAR
+
+	rsset	WORKRAM+$9000		; == WORKRAM+$FF009000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF009000
+
+	endif
 VARSSTART	rs.b	0			; Start of variables
 kosBuffer	rs.b	0			; Kosinski decompression buffer
 planetImage	rs.b	$5800			; Planet image buffer

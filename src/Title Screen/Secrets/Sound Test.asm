@@ -1063,6 +1063,8 @@ DrawTilemapH128:
 
 ; -------------------------------------------------------------------------
 
-	dcb.b	$FF5000-*, 0
+	dcb.b	WORKRAM+$5000-*, 0		; (was $FF5000; WORKRAM-relative so it
+					; follows the Jaguar rebase -- as a literal it
+					; padded the file out by 15 MB)
 
 ; -------------------------------------------------------------------------

@@ -386,9 +386,18 @@ Z80REQ macros
 ; -------------------------------------------------------------------------
 
 Z80WAIT macro
+	if JAGUAR
+	; There is no Z80 on the Jaguar, so the bus request is never
+	; acknowledged and this loop never exits.  It is not a slow path or a
+	; degraded one -- the first booting build got as far as MDINIT and
+	; stopped here forever, with the sound driver upload one instruction
+	; away.  The Z80 RAM shadow is ordinary DRAM the sound layer reads, so
+	; there is nothing to arbitrate and nothing to wait for.
+	else
 .Wait\@:
 	btst	#0,Z80BUS			; Was the request acknowledged?
 	bne.s	.Wait\@				; If not, wait
+	endif
 	endm
 
 ; -------------------------------------------------------------------------

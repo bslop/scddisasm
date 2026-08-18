@@ -116,7 +116,19 @@ blockBuffer 		rs.b	$2000		; Block buffer
 unkBuffer2 		rs.b	$1000		; Unknown buffer
 			rs.b	$3000
 
+	if JAGUAR
+
+	rsset	WORKRAM+$A000		; == WORKRAM+$FF00A000 in 24 bits,
+
+						; without the $FF prefix that would
+
+						; otherwise reach an `org`
+
+	else
+
 	rsset	WORKRAM+$FF00A000
+
+	endif
 levelLayout 		rs.b	$800		; Level layout
 deformBuffer		rs.b	$200		; Deformation buffer
 nemBuffer		rs.b	$200		; Nemesis decompression buffer
