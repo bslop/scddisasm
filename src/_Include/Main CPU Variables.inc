@@ -192,6 +192,6 @@ scrlSectSpeeds		rs.b	$200		; Scroll section speeds
 MAINVARSSZ		EQU	__rs-MAINVARS	; Size of Main CPU global variables area
 
 WORKRAMFILE		rs.b	$6000		; Work RAM file data
-WORKRAMFILESZ		EQU	$FFFB00-WORKRAMFILE
+WORKRAMFILESZ		EQU	WORKRAM+$FB00-WORKRAMFILE	; (was $FFFB00; WORKRAM-relative so it follows the Jaguar rebase)
 
 ; -------------------------------------------------------------------------

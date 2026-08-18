@@ -572,7 +572,10 @@ PushObject:
 
 .SetPushObj:
 	move.w	a0,d1				; Make the player push on us
-	subi.w	#objects,d1
+	subi.w	#objects&$FFFF,d1		; (&$FFFF: this is 16-bit pointer arithmetic on
+						;  a work-RAM address, and the Jaguar rebase makes
+						;  the full address wider than a word.  Byte-neutral
+						;  for the Mega CD build: $FFxxxx & $FFFF == $xxxx.)
 	lsr.w	#6,d1
 	andi.w	#$7F,d1
 	move.b	d1,oPlayerPushObj(a1)

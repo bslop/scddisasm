@@ -6,6 +6,12 @@
 
 MAINCPU		EQU	1
 
+; Atari Jaguar port (jag_soniccd).  JAGUAR is passed on the asm68k command
+; line; 0 builds the original Mega CD target, unchanged.
+	if JAGUAR
+		include	"_Include/Jaguar.inc"
+	endif
+
 ; -------------------------------------------------------------------------
 ; Addresses
 ; -------------------------------------------------------------------------
@@ -28,31 +34,69 @@ EXPANSIONE	EQU	$400000			; Expansion memory end
 EXPANDS		EQU	EXPANSIONE-EXPANSION	; Expansion memory size
 
 ; Z80
+	if JAGUAR
+Z80RAM		EQU	JAG_Z80RAM		; Z80 RAM start
+	else
 Z80RAM		EQU	$A00000			; Z80 RAM start
+	endif
 Z80RAME		EQU	$A02000			; Z80 RAM end
 Z80RAMS		EQU	Z80RAME-Z80RAM		; Z80 RAM size
+	if JAGUAR
+Z80BUS		EQU	JAG_Z80BUS		; Z80 bus request
+Z80RESET	EQU	JAG_Z80RESET		; Z80 reset
+	else
 Z80BUS		EQU	$A11100			; Z80 bus request
 Z80RESET	EQU	$A11200			; Z80 reset
+	endif
 
 ; Work RAM
+	if JAGUAR
+WORKRAM		EQU	JAG_WORKRAM		; Work RAM start
+WORKRAME	EQU	JAG_WORKRAM+$10000	; Work RAM end
+	else
 WORKRAM		EQU	$FF0000			; Work RAM start
 WORKRAME	EQU	$1000000		; Work RAM end
+	endif
 WORKRAMS	EQU	WORKRAME-WORKRAM	; Work RAM size
 
 ; Sound
+	if JAGUAR
+YMADDR0		EQU	JAG_YM+0		; YM2612 address port 0
+YMDATA0		EQU	JAG_YM+1		; YM2612 data port 0
+YMADDR1		EQU	JAG_YM+2		; YM2612 address port 1
+YMDATA1		EQU	JAG_YM+3		; YM2612 data port 1
+PSGCTRL		EQU	JAG_VDP+$11		; PSG control port
+	else
 YMADDR0		EQU	$A04000			; YM2612 address port 0
 YMDATA0		EQU	$A04001			; YM2612 data port 0
 YMADDR1		EQU	$A04002			; YM2612 address port 1
 YMDATA1		EQU	$A04003			; YM2612 data port 1
 PSGCTRL		EQU	$C00011			; PSG control port
+	endif
 
 ; VDP
+	if JAGUAR
+VDPDATA		EQU	JAG_VDP+$00		; VDP data port
+VDPCTRL		EQU	JAG_VDP+$04		; VDP control port
+VDPHVCNT	EQU	JAG_VDP+$08		; VDP H/V counter
+VDPDEBUG	EQU	JAG_VDP+$1C		; VDP debug register
+	else
 VDPDATA		EQU	$C00000			; VDP data port
 VDPCTRL		EQU	$C00004			; VDP control port
 VDPHVCNT	EQU	$C00008			; VDP H/V counter
 VDPDEBUG	EQU	$C0001C			; VDP debug register
+	endif
 
 ; I/O
+	if JAGUAR
+VERSION		EQU	JAG_IO+$01		; Hardware version
+IODATA1		EQU	JAG_IO+$03		; I/O port 1 data port
+IODATA2		EQU	JAG_IO+$05		; I/O port 2 data port
+IODATA3		EQU	JAG_IO+$07		; I/O port 3 data port
+IOCTRL1		EQU	JAG_IO+$09		; I/O port 1 control port
+IOCTRL2		EQU	JAG_IO+$0B		; I/O port 2 control port
+IOCTRL3		EQU	JAG_IO+$0D		; I/O port 3 control port
+	else
 VERSION		EQU	$A10001			; Hardware version
 IODATA1		EQU	$A10003			; I/O port 1 data port
 IODATA2		EQU	$A10005			; I/O port 2 data port
@@ -60,37 +104,67 @@ IODATA3		EQU	$A10007			; I/O port 3 data port
 IOCTRL1		EQU	$A10009			; I/O port 1 control port
 IOCTRL2		EQU	$A1000B			; I/O port 2 control port
 IOCTRL3		EQU	$A1000D			; I/O port 3 control port
+	endif
 
 ; TMSS
+	if JAGUAR
+TMSSSEGA	EQU	JAG_TMSS+$00		; TMSS "SEGA" register
+TMSSMODE	EQU	JAG_TMSS+$04		; TMSS bus mode
+	else
 TMSSSEGA	EQU	$A14000			; TMSS "SEGA" register
 TMSSMODE	EQU	$A14100			; TMSS bus mode
+	endif
 
 ; Mega CD BIOS ROM
+	if JAGUAR
+CDBIOS		EQU	JAG_CDBIOS		; MCD BIOS ROM start
+	else
 CDBIOS		EQU	EXPANSION+$000000	; MCD BIOS ROM start
+	endif
 CDBIOSE		EQU	EXPANSION+$020000	; MCD BIOS ROM end
 CDBIOSS		EQU	CDBIOSE-CDBIOS		; MCD BIOS ROM size
 
 ; Mega CD PRG-RAM
+	if JAGUAR
+PRGRAM		EQU	JAG_PRGRAM		; MCD PRG-RAM bank start
+	else
 PRGRAM		EQU	EXPANSION+$020000	; MCD PRG-RAM bank start
+	endif
 PRGRAME		EQU	EXPANSION+$040000	; MCD PRG-RAM bank end
 PRGRAMS		EQU	PRGRAME-PRGRAM		; MCD PRG-RAM bank size
 SUBPRGRAM	EQU	$000000			; MCD Sub CPU address for PRG-RAM
 
 ; Mega CD Word RAM
+	if JAGUAR
+WORDRAM1M	EQU	JAG_WORDRAM		; MCD Word RAM start (1M/1M)
+	else
 WORDRAM1M	EQU	EXPANSION+$200000	; MCD Word RAM start (1M/1M)
+	endif
 WORDRAM1ME	EQU	EXPANSION+$220000	; MCD Word RAM end (1M/1M)
 WORDRAM1MS	EQU	WORDRAM1ME-WORDRAM1M	; MCD Word RAM size (1M/1M)
+	if JAGUAR
+WORDRAM2M	EQU	JAG_WORDRAM		; MCD Word RAM start (2M)
+	else
 WORDRAM2M	EQU	EXPANSION+$200000	; MCD Word RAM start (2M)
+	endif
 WORDRAM2ME	EQU	EXPANSION+$240000	; MCD Word RAM end (2M)
 WORDRAM2MS	EQU	WORDRAM2ME-WORDRAM2M	; MCD Word RAM size (2M)
+	if JAGUAR
+WORDRAMIMG	EQU	JAG_WORDRAM+$20000	; MCD VRAM image of Word RAM start (1M/1M)
+	else
 WORDRAMIMG	EQU	EXPANSION+$220000	; MCD VRAM image of Word RAM start (1M/1M)
+	endif
 WORDRAMIMGE	EQU	EXPANSION+$240000	; MCD VRAM image of Word RAM end (1M/1M)
 WORDRAMIMGS	EQU	WORDRAMIMGE-WORDRAMIMGS	; MCD VRAM image of Word RAM size (1M/1M)
 SUBWORDRAM2M	EQU	$080000			; MCD Sub CPU address for Word RAM (2M)
 SUBWORDRAM1M	EQU	$0C0000			; MCD Sub CPU address for Word RAM (1M/1M)
 
 ; Mega CD gate array
+	if JAGUAR
+GATEARRAY	EQU	JAG_GA			; Gate array
+	else
 GATEARRAY	EQU	$A12000			; Gate array
+	endif
 GAIRQ2		EQU	GATEARRAY+$0000		; IRQ2 send
 GARESET		EQU	GATEARRAY+$0001		; Reset
 GAPROTECT	EQU	GATEARRAY+$0002		; Write protection
@@ -142,6 +216,38 @@ BIOS_SetVDPRegs	EQU	CDBIOS+$2B0		; Set up VDP registers
 BIOS_DMA68k	EQU	CDBIOS+$2D4		; DMA 68000 data to VDP memory
 
 ; CD Work RAM assignments
+	if JAGUAR
+_EXCPT		EQU	WORKRAM+$FD00		; Exception
+_LEVEL6		EQU	WORKRAM+$FD06		; V-INT
+_LEVEL4		EQU	WORKRAM+$FD0C		; H-INT
+_LEVEL2		EQU	WORKRAM+$FD12		; EXT-INT
+_TRAP00		EQU	WORKRAM+$FD18		; TRAP #00
+_TRAP01		EQU	WORKRAM+$FD1E		; TRAP #01
+_TRAP02		EQU	WORKRAM+$FD24		; TRAP #02
+_TRAP03		EQU	WORKRAM+$FD2A		; TRAP #03
+_TRAP04		EQU	WORKRAM+$FD30		; TRAP #04
+_TRAP05		EQU	WORKRAM+$FD36		; TRAP #05
+_TRAP06		EQU	WORKRAM+$FD3C		; TRAP #06
+_TRAP07		EQU	WORKRAM+$FD42		; TRAP #07
+_TRAP08		EQU	WORKRAM+$FD48		; TRAP #08
+_TRAP09		EQU	WORKRAM+$FD4E		; TRAP #09
+_TRAP10		EQU	WORKRAM+$FD54		; TRAP #10
+_TRAP11		EQU	WORKRAM+$FD5A		; TRAP #11
+_TRAP12		EQU	WORKRAM+$FD60		; TRAP #12
+_TRAP13		EQU	WORKRAM+$FD66		; TRAP #13
+_TRAP14		EQU	WORKRAM+$FD6C		; TRAP #14
+_TRAP15		EQU	WORKRAM+$FD72		; TRAP #15
+_CHKERR		EQU	WORKRAM+$FD78		; CHK exception
+_ADRERR		EQU	WORKRAM+$FD7E		; Address error
+_CODERR		EQU	WORKRAM+$FD7E		; Illegal instruction
+_DIVERR		EQU	WORKRAM+$FD84		; Division by zero
+_TRPERR		EQU	WORKRAM+$FD8A		; TRAPV
+_NOCOD0		EQU	WORKRAM+$FD90		; Line A emulator
+_NOCOD1		EQU	WORKRAM+$FD96		; Line F emulator
+_SPVERR		EQU	WORKRAM+$FD9C		; Privilege violation
+_TRACE		EQU	WORKRAM+$FDA2		; TRACE exception
+_BURAM		EQU	WORKRAM+$FDAE		; Cartridge Backup RAM handler
+	else
 _EXCPT		EQU	$FFFFFD00		; Exception
 _LEVEL6		EQU	$FFFFFD06		; V-INT
 _LEVEL4		EQU	$FFFFFD0C		; H-INT
@@ -172,6 +278,7 @@ _NOCOD1		EQU	$FFFFFD96		; Line F emulator
 _SPVERR		EQU	$FFFFFD9C		; Privilege violation
 _TRACE		EQU	$FFFFFDA2		; TRACE exception
 _BURAM		EQU	$FFFFFDAE		; Cartridge Backup RAM handler
+	endif
 
 ; -------------------------------------------------------------------------
 ; BIOS function codes

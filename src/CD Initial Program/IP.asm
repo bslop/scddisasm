@@ -28,7 +28,7 @@
 ; -------------------------------------------------------------------------
 
 	move.l	#VInterrupt,_LEVEL6+2.w		; Set V-INT address
-	move.w	#_LEVEL4,GAUSERHINT		; Set H-INT address
+	move.w	#_LEVEL4&$FFFF,GAUSERHINT		; Set H-INT address
 	move.l	#HInterrupt,_LEVEL4+2.w
 
 .SendWordRAM:
