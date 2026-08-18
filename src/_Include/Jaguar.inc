@@ -51,6 +51,7 @@ _vdp_ctrl_w	EQU	JAG_PLATCALL+$00	; capture a control-port word
 _vdp_ctrl_l	EQU	JAG_PLATCALL+$06	; capture a control-port long
 _vdp_data_w	EQU	JAG_PLATCALL+$0C	; capture a data-port word
 _vdp_data_l	EQU	JAG_PLATCALL+$12	; capture a data-port long
+_vdp_scratch	EQU	JAG_PLATCALL+$40	; scratch for a stack-relative source
 
 ; Sub-slots inside the I/O shadow.  $A11100/$A11200/$A14000 are far apart in
 ; Genesis space and would each want their own 4 KB page; they are folded into
