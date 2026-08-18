@@ -3502,6 +3502,7 @@ ChkTrkTitleSpawn:
 	
 	lea	trackSelData.w,a2		; Get object slot
 	movea.w	trkSelTitle(a2),a1
+	WRAMPTR	a1
 	move.w	#7,oID(a1)			; Set object ID
 	
 	btst	#0,objSpawnFlags.w		; Is the spawn slot 0 occupied?

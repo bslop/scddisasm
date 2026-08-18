@@ -18,6 +18,7 @@ LoadPalette:
 
 	movea.l	(a1)+,a2			; Get palette pointer
 	movea.w	(a1)+,a3			; Get palette buffer pointer
+	WRAMPTR	a3
 	move.w	(a1)+,d7			; Get palette length
 
 .Load:

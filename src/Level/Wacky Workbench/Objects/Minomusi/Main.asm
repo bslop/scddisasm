@@ -235,6 +235,7 @@ ObjMinomusi_Attack:
 
 ObjMinomusiSpikes:
 	movea.w	oMinoParent(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$33,oID(a1)
 	bne.s	.Delete
 	cmpi.b	#1,oAnimFrame(a1)
@@ -248,6 +249,7 @@ ObjMinomusiSpikes:
 
 ObjMinomusiSilk:
 	movea.w	oMinoParent(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$33,oID(a1)
 	beq.s	.Draw
 	jmp	DeleteObject

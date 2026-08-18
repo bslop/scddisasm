@@ -262,6 +262,7 @@ DrawObjects:
 
 .ObjLoop:
 	movea.w	(a4,d6.w),a0			; Get entry object RAM
+	WRAMPTR	a0
 
 	tst.b	(a0)				; Is this object loaded?
 	beq.w	.NextObj			; If not, branch

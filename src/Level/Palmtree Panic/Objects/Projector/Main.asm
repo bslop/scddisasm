@@ -176,6 +176,7 @@ locret_20E6E6:
 
 ObjMetalSonicHologram:
 	movea.w	oVar3E(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$2E,oID(a1)
 	bne.w	ObjProjector_Destroy
 	tst.b	oVar3F(a1)

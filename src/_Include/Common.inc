@@ -31,6 +31,27 @@ pad	=	((\bound)-((*)%(\bound)))%(\bound)
 	endm
 
 ; -------------------------------------------------------------------------
+; Rebase a work-RAM pointer just reloaded with movea.w
+; -------------------------------------------------------------------------
+; The game stores work-RAM pointers as 16-bit words (`move.w a0,oParent(a1)`)
+; and reloads them with `movea.w`, which sign-extends.  On the Mega Drive that
+; round-trip is exact -- the pointers live in $FF8000-$FFFFFF and the sign
+; extension puts the $FFFF back.  On the Atari Jaguar it still puts $FFFF back,
+; and there is no memory there, so the pointer has to be mapped into the
+; rebased work RAM.  WORKRAM-$FF0000 is zero on the Mega CD, so this macro
+; assembles to nothing at all there.
+;
+; PARAMETERS:
+;	reg - Address register just loaded with movea.w
+; -------------------------------------------------------------------------
+
+WRAMPTR macro reg
+	if JAGUAR
+		adda.l	#WORKRAM-$FF0000,\reg
+	endif
+	endm
+
+; -------------------------------------------------------------------------
 ; Pad RS to even address
 ; -------------------------------------------------------------------------
 

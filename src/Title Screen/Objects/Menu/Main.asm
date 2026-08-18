@@ -541,6 +541,7 @@ ObjMenuArrow:
 
 ObjMenuArrow_Right:
 	movea.w	oArrowParent(a0),a1		; Get parent object
+	WRAMPTR	a1
 	tst.b	oMenuAllowSel(a1)		; Is selection enabled?
 	bne.s	.CheckOption			; If so, branch
 
@@ -586,6 +587,7 @@ ObjMenuArrow_Right:
 
 ObjMenuArrow_Left:
 	movea.w	oArrowParent(a0),a1		; Get parent object
+	WRAMPTR	a1
 	tst.b	oMenuAllowSel(a1)		; Is selection enabled?
 	bne.s	.CheckOption			; If so, branch
 

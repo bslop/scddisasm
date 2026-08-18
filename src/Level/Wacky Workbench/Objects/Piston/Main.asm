@@ -137,6 +137,7 @@ ObjPiston_SetupSolidSide:
 
 ObjPiston_SolidSide:
 	movea.w	oPistonParent(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$20,oID(a1)
 	bne.s	.Delete
 	

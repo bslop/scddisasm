@@ -92,20 +92,25 @@ ObjSeesaw_Main:
 
 	move.w	a0,-(sp)
 	movea.w	oSeesawPtfm2(a0),a0
+	WRAMPTR	a0
 	lea	objPlayerSlot.w,a1
 	jsr	TopSolidObject
 	jsr	DrawObject
 	movea.w	(sp)+,a0
+	WRAMPTR	a0
 
 	move.w	a0,-(sp)
 	movea.w	oSeesawPtfm1(a0),a0
+	WRAMPTR	a0
 	lea	objPlayerSlot.w,a1
 	jsr	TopSolidObject
 	sne	oSeesawStood(a0)
 	jsr	DrawObject
 	movea.w	(sp)+,a0
+	WRAMPTR	a0
 
 	movea.w	oSeesawPtfm1(a0),a1
+	WRAMPTR	a1
 	tst.b	oSeesawStood(a1)
 	bne.s	.StoodOn
 
@@ -142,7 +147,9 @@ ObjSeesaw_CheckSlideDown:
 
 ObjSeesaw_SlideDown:
 	movea.w	oSeesawPtfm1(a0),a1
+	WRAMPTR	a1
 	movea.w	oSeesawPtfm2(a0),a2
+	WRAMPTR	a2
 
 	moveq	#0,d0
 	move.b	oYVel(a0),d0
@@ -164,13 +171,16 @@ ObjSeesaw_SlideDown:
 	movea.w	a2,a0
 	jsr	ObjGetFloorDist2
 	movea.w	(sp)+,a0
+	WRAMPTR	a0
 	tst.w	d1
 	bmi.s	.Landed
 	rts
 
 .Landed:
 	movea.w	oSeesawPtfm1(a0),a1
+	WRAMPTR	a1
 	movea.w	oSeesawPtfm2(a0),a2
+	WRAMPTR	a2
 	add.w	d1,oY(a0)
 	add.w	d1,oY(a1)
 	add.w	d1,oY(a2)
@@ -181,6 +191,7 @@ ObjSeesaw_SlideDown:
 
 ObjSeesaw_PushUp:
 	movea.w	oSeesawPtfm2(a0),a1
+	WRAMPTR	a1
 	subi.w	#24,oY(a1)
 	subi.w	#12,oY(a0)
 
@@ -191,12 +202,16 @@ ObjSeesaw_PushUp:
 .Draw:
 	move.w	a0,-(sp)
 	movea.w	oSeesawPtfm2(a0),a0
+	WRAMPTR	a0
 	jsr	DrawObject
 	movea.w	(sp),a0
+	WRAMPTR	a0
 
 	movea.w	oSeesawPtfm1(a0),a0
+	WRAMPTR	a0
 	jsr	DrawObject
 	movea.w	(sp)+,a0
+	WRAMPTR	a0
 
 	rts
 
@@ -223,6 +238,7 @@ ObjSeesaw_Swap:
 
 ObjSeesawPtfm:
 	movea.w	oSeesawParent(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$2C,oID(a1)
 	bne.s	ObjSeesaw_Delete
 	rts

@@ -92,6 +92,7 @@ oSnakeYVel	EQU	oVar3C
 
 ObjSnakeSub:
 	movea.w	oSnakeParent(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$2A,oID(a1)
 	bne.w	ObjSnakeSub_Delete
 	move.b	oSubtype2(a0),d0
@@ -151,6 +152,7 @@ ObjSnakeSub_Init:
 	
 .NotLeft:
 	movea.w	oSnakeParent(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#2,oSubtype(a1)
 	bne.s	ObjSnakeSub_Move
 	
@@ -203,6 +205,7 @@ ObjSnakeSub_Wait:
 	beq.s	.End
 	addq.b	#2,oRoutine(a0)
 	movea.w	oSnakeParent(a0),a1
+	WRAMPTR	a1
 	st	oSnakeSpawn(a1)
 	
 .End:
@@ -257,6 +260,7 @@ ObjSnakeSub_Wait2:
 	bpl.s	.End
 	
 	movea.w	oSnakePrev(a0),a1
+	WRAMPTR	a1
 	tst.b	oSubtype(a1)
 	bpl.s	.Done
 	addq.b	#2,oRoutine(a1)

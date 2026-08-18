@@ -40,6 +40,7 @@ ObjSwitch_Main:
 	lea	objPlayerSlot.w,a1
 	jsr	SolidObject
 	movea.w	oSwitchFlag(a0),a4
+	WRAMPTR	a4
 	sne	oSwitchPress(a0)
 	bne.s	.Pressed
 

@@ -80,6 +80,7 @@ ObjFlyingAnimal_Hologram:
 ; FUNCTION CHUNK AT 0020D17C SIZE 00000006 BYTES
 
 	movea.w	oVar3E(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$2F,oID(a1)
 	bne.w	ObjAnimal_Destroy
 	tst.b	oVar3F(a1)
@@ -183,6 +184,7 @@ ObjGroundAnimal_Flip:
 
 ObjGroundAnimal_Hologram:
 	movea.w	oVar3E(a0),a1
+	WRAMPTR	a1
 	cmpi.b	#$2F,oID(a1)
 	bne.w	ObjAnimal_Destroy
 	tst.b	oVar3F(a1)
