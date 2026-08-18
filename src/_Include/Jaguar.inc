@@ -51,7 +51,14 @@ _vdp_ctrl_w	EQU	JAG_PLATCALL+$00	; capture a control-port word
 _vdp_ctrl_l	EQU	JAG_PLATCALL+$06	; capture a control-port long
 _vdp_data_w	EQU	JAG_PLATCALL+$0C	; capture a data-port word
 _vdp_data_l	EQU	JAG_PLATCALL+$12	; capture a data-port long
+_vdp_store_w	EQU	JAG_PLATCALL+$18	; store whose destination is dynamic
+_vdp_store_l	EQU	JAG_PLATCALL+$1E
 _vdp_scratch	EQU	JAG_PLATCALL+$40	; scratch for a stack-relative source
+
+; A word the platform guarantees stays zero.  Z80 bus-grant polls are pointed
+; at it so they read "granted" and fall straight through -- there is no Z80 to
+; acknowledge a request, and a poll that never exits is a permanent hang.
+JAG_ZERO	EQU	JAG_PLATCALL+$50
 
 ; Sub-slots inside the I/O shadow.  $A11100/$A11200/$A14000 are far apart in
 ; Genesis space and would each want their own 4 KB page; they are folded into
