@@ -42,6 +42,16 @@ JAG_GA		EQU	$1B3400			; Gate array shadow
 ; provided by the platform layer at the base below instead.
 JAG_CDBIOS	EQU	$130000			; BIOS entry stubs
 
+; The platform's call table.  The game is assembled by asm68k and the platform
+; by jas, with nothing linking them, so the game calls an ADDRESS rather than a
+; symbol.  KEEP IN SYNC WITH include/jag_mem_map.inc (check_contract.py).
+; Six bytes per entry, APPEND ONLY.
+JAG_PLATCALL	EQU	$131000
+_vdp_ctrl_w	EQU	JAG_PLATCALL+$00	; capture a control-port word
+_vdp_ctrl_l	EQU	JAG_PLATCALL+$06	; capture a control-port long
+_vdp_data_w	EQU	JAG_PLATCALL+$0C	; capture a data-port word
+_vdp_data_l	EQU	JAG_PLATCALL+$12	; capture a data-port long
+
 ; Sub-slots inside the I/O shadow.  $A11100/$A11200/$A14000 are far apart in
 ; Genesis space and would each want their own 4 KB page; they are folded into
 ; one page here, because nothing reads them as a contiguous block.
