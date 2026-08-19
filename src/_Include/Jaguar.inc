@@ -60,6 +60,7 @@ _vdp_scratch	EQU	JAG_PLATCALL+$40	; scratch for a stack-relative source
 ; acknowledge a request, and a poll that never exits is a permanent hang.
 JAG_ZERO	EQU	JAG_PLATCALL+$50
 _subcpu_cmd	EQU	JAG_PLATCALL+$24	; issue a Sub CPU command (word in d0)
+_field_wait_ccr	EQU	JAG_PLATCALL+$2A	; bound a vblank spin; preserves CCR
 
 ; Sub-slots inside the I/O shadow.  $A11100/$A11200/$A14000 are far apart in
 ; Genesis space and would each want their own 4 KB page; they are folded into
