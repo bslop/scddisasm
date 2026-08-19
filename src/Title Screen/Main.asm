@@ -1519,7 +1519,7 @@ RunObjects:
 ; -------------------------------------------------------------------------
 
 RunObject:
-	moveq	#$FFFFFFFF,d0			; Run object
+	WRAMHI	d0				; Run object
 	move.w	oAddr(a0),d0
 	movea.l	d0,a1
 	jmp	(a1)
