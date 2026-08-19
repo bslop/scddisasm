@@ -2912,7 +2912,7 @@ FindOtherObjByID:
 .Find:
 	cmp.w	(a1),d0				; Does this object use this ID?
 	bne.s	.NextObject			; If not, branch
-	cmpa.w	a0,a1				; Is this object slot ours?
+	CMPAPTR	a0,a1			; Is this object slot ours?
 	bne.s	.End				; If not, branch
 
 .NextObject:

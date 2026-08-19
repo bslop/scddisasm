@@ -95,6 +95,44 @@ WRAMHI macro reg
 	endm
 
 ; -------------------------------------------------------------------------
+; Compare a work-RAM pointer that was computed 24-bit
+; -------------------------------------------------------------------------
+; The third face of the same coin as WRAMPTR and WRAMHI, and the quietest,
+; because it does not produce a wrong ADDRESS -- it produces a wrong ANSWER:
+;
+;	addi.l	#objects&$FFFFFF,d0	; slot pointer, masked to 24 bits
+;	cmpa.w	d0,a0			; "Is it us?"
+;
+; `cmpa.w` sign-extends the low word before comparing.  On the Mega CD that is
+; the whole trick: the mask drops $FF0000's top byte, and the sign extension of
+; $Axxx puts the $FFFF back, so the comparison is exact.  On the Jaguar the
+; pointer is $0014Axxx, the sign extension still yields $FFFFAxxx, and the two
+; are never equal -- so every "is this object us?" test silently answers NO.
+;
+; Under JAGUAR the masked value is already the complete pointer (no $FF prefix
+; was ever dropped), so the comparison simply widens to .l.  On the Mega CD it
+; must stay .w, because there the masked value genuinely is missing the prefix
+; that only sign extension restores.
+;
+; ⚠ Only for operands that are POINTERS.  `cmpa.w #$10,a3` compares against a
+; stride and `cmpa.w #0,a4` against zero; both are correct as they stand and
+; both would still be correct widened, but widening them says something untrue
+; about what the register holds.
+;
+; PARAMETERS:
+;	src  - source operand (dN, aN or #imm)
+;	areg - address register holding a live work-RAM pointer
+; -------------------------------------------------------------------------
+
+CMPAPTR macro src,areg
+	if JAGUAR
+		cmpa.l	\src,\areg
+	else
+		cmpa.w	\src,\areg
+	endif
+	endm
+
+; -------------------------------------------------------------------------
 ; Pad RS to even address
 ; -------------------------------------------------------------------------
 

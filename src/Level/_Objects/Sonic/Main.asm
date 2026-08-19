@@ -57,7 +57,7 @@ ObjSonic:
 	if (REGION<>USA)|((REGION=USA)&(DEMO=0))
 		tst.b	timeAttackMode		; Are we in time attack mode?
 		bne.s	.NormalMode		; If so, branch
-		cmpa.w	#objPlayerSlot2,a0	; Are we the second player?
+		CMPAPTR	#objPlayerSlot2,a0 ; Are we the second player?
 		beq.s	.NormalMode		; If so, branch
 		if DEMO<>0
 			btst	#7,p2CtrlTap.w	; Did player 2 press the start button?

@@ -26,7 +26,7 @@ GetOffObject:
 		mulu.w	#oSize,d0
 	endif
 	addi.l	#objects&$FFFFFF,d0
-	cmpa.w	d0,a0				; Is it us?
+	CMPAPTR	d0,a0			; Is it us?
 	bne.s	.End				; If not, branch
 
 	tst.b	oPlayerCharge(a1)		; Is the player charging a peelout or spindash?
@@ -112,7 +112,7 @@ StandOnObject:
 		mulu.w	#oSize,d0
 	endif
 	addi.l	#objects&$FFFFFF,d0
-	cmpa.w	d0,a0				; Is it us?
+	CMPAPTR	d0,a0			; Is it us?
 	beq.s	.End				; If so, branch
 	movea.l	d0,a2				; If not, make the player stop standing on that
 	bclr	#3,oFlags(a2)
@@ -537,7 +537,7 @@ PushObject:
 		mulu.w	#oSize,d1
 	endif
 	addi.l	#objects&$FFFFFF,d1
-	cmpa.w	d1,a0				; Is it us?
+	CMPAPTR	d1,a0			; Is it us?
 	beq.s	.End				; If so, branch
 	movea.l	d1,a2
 	
@@ -601,7 +601,7 @@ StopObjPush:
 		mulu.w	#oSize,d1
 	endif
 	addi.l	#objects&$FFFFFF,d1
-	cmpa.w	d1,a0				; Is it us?
+	CMPAPTR	d1,a0			; Is it us?
 	bne.s	.End				; If not, branch
 	
 	move.b	#0,oPlayerPushObj(a1)		; Make the player stop pushing on us
