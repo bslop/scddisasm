@@ -95,6 +95,75 @@ WRAMHI macro reg
 	endm
 
 ; -------------------------------------------------------------------------
+; Nemesis XOR-mode routine adjust — a DISTANCE between two labels
+; -------------------------------------------------------------------------
+; ☠ A NEW CLASS, and the first one the port has hit that is not about
+; pointers at all: code the funnel REWRITES gets LONGER, and the game does
+; arithmetic on the distance between labels.
+;
+; NemDec's decompressor picks its "write one 8-pixel row" routine at run time
+; and keeps it in a3.  There are four, in two pairs — to the VDP, and to RAM —
+; and each pair is (plain, XOR).  The XOR-mode adjust is written ONCE, in the
+; shared NemDecMain, as the distance measured across the VDP pair:
+;
+;	adda.w	#NemPCD_WriteRowToVDP_XOR-NemPCD_WriteRowToVDP,a3
+;
+; and then applied to whichever pair a3 belongs to.  On the Mega CD that is
+; exact, because both pairs are ten bytes: `move.l d4,(a4)` and
+; `move.l d4,(a4)+` are the same size, and the four instructions after them
+; are identical.
+;
+; ⚠ In this port they are NOT the same size.  The VDP write goes through the
+; funnel and becomes five instructions — push, marshal, `jsr PC_VDP_STORE_L`,
+; pop — so the VDP pair measures $16 while the RAM pair still measures $A.
+; Measured in the built R11A__.MMD:
+;
+;	NemPCD_WriteRowToVDP     $152C68   NemPCD_WriteRowToRAM     $152C96
+;	NemPCD_WriteRowToVDP_XOR $152C7E   NemPCD_WriteRowToRAM_XOR $152CA0
+;	                delta $16                          delta $A
+;
+; So a RAM decompression in XOR mode set a3 to $152C96+$16 = $152CAC, which is
+; NemDec_BuildCodeTable — and NemPCD_NewRow jumped into the middle of the code
+; TABLE BUILDER.  Its NemBCT_ShortCode_Loop then ran with a garbage shift
+; count, `d5` came out $FFFF, and 65,536 iterations of
+; `move.w d7,(0,a1,d0.w)` smeared $0C61 across $142A00-$15A9FE: all of Genesis
+; work RAM, the V-INT vector at $14FD08 with it, and the running level's own
+; code in Word RAM.  The next V-INT jumped through $0C610C61 and took an
+; address error.  Three seconds into Palmtree Panic, every time.
+;
+; ⭐ The VDP path is unaffected — its own distance is what the constant
+; measures — which is why the title screen never showed it.  Only NemDecToRAM
+; in XOR mode is wrong, and only a level uses it.
+;
+; The fix carries the RIGHT distance from the entry point that chose the pair,
+; in d3, which NemDecMain does not touch until after the adjust and which the
+; entry movem has already saved.  On the Mega CD the original constant stands.
+;
+; PARAMETERS:
+;	plain - the NemPCD_WriteRowTo* routine a3 was just set to
+;	xor   - its XOR-mode twin
+; -------------------------------------------------------------------------
+
+NEMXORD macro plain, xor
+	if JAGUAR
+	move.w	#\xor-\plain,d3
+	endif
+	endm
+
+; -------------------------------------------------------------------------
+; Apply the adjust NEMXORD measured.  See NEMXORD for why this is not just
+; the constant the game wrote.
+; -------------------------------------------------------------------------
+
+NEMXORA macro
+	if JAGUAR
+	adda.w	d3,a3
+	else
+	adda.w	#NemPCD_WriteRowToVDP_XOR-NemPCD_WriteRowToVDP,a3
+	endif
+	endm
+
+; -------------------------------------------------------------------------
 ; Compare a work-RAM pointer that was computed 24-bit
 ; -------------------------------------------------------------------------
 ; The third face of the same coin as WRAMPTR and WRAMHI, and the quietest,

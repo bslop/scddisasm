@@ -1004,6 +1004,7 @@ NemDec:
 	movem.l	d0-a1/a3-a5,-(sp)
 	lea	NemPCD_WriteRowToVDP,a3		; Write all data to the same location
 	lea	VDPDATA,a4			; VDP data port
+	NEMXORD	NemPCD_WriteRowToVDP,NemPCD_WriteRowToVDP_XOR
 	bra.s	NemDecMain
 
 ; -------------------------------------------------------------------------
@@ -1017,6 +1018,7 @@ NemDec:
 NemDecToRAM:
 	movem.l	d0-a1/a3-a5,-(sp)
 	lea	NemPCD_WriteRowToRAM,a3		; Advance to the next location after each write
+	NEMXORD	NemPCD_WriteRowToRAM,NemPCD_WriteRowToRAM_XOR
 
 ; -------------------------------------------------------------------------
 
@@ -1025,7 +1027,7 @@ NemDecMain:
 	move.w	(a0)+,d2			; Get number of patterns
 	lsl.w	#1,d2
 	bcc.s	.NormalMode			; Branch if not in XOR mode
-	adda.w	#NemPCD_WriteRowToVDP_XOR-NemPCD_WriteRowToVDP,a3
+	NEMXORA
 
 .NormalMode:
 	lsl.w	#2,d2				; Get number of 8-pixel rows in the uncompressed data
