@@ -482,6 +482,54 @@ GetLevelBlock:
 	bclr	#6,oSprFlags(a0)		; Move the object onto the lower path layer
 
 .NotWWZ:
+	if JAGUAR
+
+; !! THIS BLOCK EXISTS BECAUSE `ext.w` EATS THE BASE.  The Mega CD builds the
+; block pointer IN PLACE in d1: `move.l #LevelChunks,d1` puts the base there,
+; `move.b` drops the chunk ID into the low byte, and `ext.w` then sign-extends
+; that byte across the LOW WORD -- silently clearing the base's low half.
+;
+; That is exact only if LevelChunks sits on a 64 KB boundary, and on the Mega CD
+; it does: measured at $210000 in the JAGUAR=0 build, low word $0000.  In this
+; port it is at $1611BE.  The file loads at $150000 instead of $200000, which
+; would still be aligned -- but WIDENING GREW THE CODE AHEAD OF IT BY $11BE
+; BYTES and pushed it off.  Every block lookup then read $160000 + index, and
+; garbage solidity is a phantom wall: Sonic was pinned at X=54 for eighteen runs.
+;
+; NOT fixed by padding the file to the next boundary -- that wastes ~60 KB on
+; files that already overrun Word RAM by ~4.5 KB (run 30).  Fixed by building
+; the index in a register of its own and adding it to the FULL base, which is
+; what the Mega CD's version computes anyway.
+	move.l	d4,-(sp)
+	move.b	d1,d4				; the chunk ID, before ext.w reaches it
+	subq.b	#1,d4
+	ext.w	d4
+	ror.w	#7,d4				; (chunk-1) * 512
+	andi.l	#$FFFF,d4			; ror.w leaves the high word untouched
+	move.w	d2,d0
+	add.w	d0,d0
+	andi.w	#$1E0,d0
+	add.w	d0,d4
+	move.w	d3,d0
+	lsr.w	#3,d0
+	andi.w	#$1E,d0
+	add.w	d0,d4
+	move.l	#LevelChunks,d1			; the base again, UNHARMED this time
+	add.l	d4,d1
+	move.l	(sp)+,d4
+	bra.s	.GotBlock
+
+.Blank:
+	move.l	#LevelChunks,d1			; the blank path has the same bug: d1
+						; still carries the base with its low
+						; BYTE cleared, which equals the base
+						; only when the base is byte-aligned
+.GotBlock:
+	movea.l	d1,a1				; Get pointer to block
+	rts
+
+	else
+
 	subq.b	#1,d1				; Prepare chunk data index value from X and Y position
 	ext.w	d1
 	ror.w	#7,d1
@@ -497,6 +545,8 @@ GetLevelBlock:
 .Blank:
 	movea.l	d1,a1				; Get pointer to block
 	rts
+
+	endif
 
 ; -------------------------------------------------------------------------
 
