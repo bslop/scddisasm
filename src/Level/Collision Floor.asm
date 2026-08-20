@@ -686,6 +686,28 @@ GetLevelBlock:
 ; -------------------------------------------------------------------------
 
 .GetBlock:
+	if JAGUAR
+; The loop-chunk path, and it has the same alignment bug as the main one above.
+; .LoopChunk's own `andi.w #$7F,d1` has ALREADY cleared the base's low word by
+; the time we get here, so the base has to be reloaded rather than preserved.
+	move.l	d4,-(sp)
+	move.b	d1,d4
+	subq.b	#1,d4
+	andi.w	#$7F,d4
+	ror.w	#7,d4
+	andi.l	#$FFFF,d4
+	move.w	d2,d0
+	add.w	d0,d0
+	andi.w	#$1E0,d0
+	add.w	d0,d4
+	move.w	d3,d0
+	lsr.w	#3,d0
+	andi.w	#$1E,d0
+	add.w	d0,d4
+	move.l	#LevelChunks,d1			; the base again, UNHARMED
+	add.l	d4,d1
+	move.l	(sp)+,d4
+	else
 	subq.b	#1,d1				; Prepare chunk data index value from X and Y position
 	ror.w	#7,d1
 	move.w	d2,d0
@@ -696,6 +718,7 @@ GetLevelBlock:
 	lsr.w	#3,d0
 	andi.w	#$1E,d0
 	add.w	d0,d1
+	endif
 
 	movea.l	d1,a1				; Get pointer to block
 	rts

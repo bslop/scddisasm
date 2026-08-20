@@ -214,6 +214,29 @@ GetBlockDataAbsXY:
 	move.b	(a4,d0.w),d3
 	beq.s	.End				; If it's a blank chunk, branch out of here
 
+	if JAGUAR
+; The same LevelChunks alignment bug the collision path had (Collision Floor.asm).
+; Here the base is cleared by `andi.w #$7F,d3` rather than `ext.w`, but the effect
+; is identical: only bits 6:0 survive, so the base's low word is gone.  That is
+; exact only when LevelChunks is 64 KB-aligned, which it is on the Mega CD
+; ($210000) and is NOT in this port ($1611BE) -- widening grew the code ahead of
+; it.  These two sites DRAW THE TILES, so a broken block pointer makes every
+; drawn cell wrong, sky cells included.
+; d0 is dead here: it was the layout index and is not read again until the
+; `moveq #1,d0` that reports success.
+	move.b	d3,d0				; the chunk ID, before the mask eats the base
+	subq.b	#1,d0
+	andi.w	#$7F,d0
+	ror.w	#7,d0
+	andi.l	#$FFFF,d0			; ror.w leaves the high word alone
+	add.w	d4,d4
+	andi.w	#$1E0,d4
+	andi.w	#$1E,d5
+	add.w	d4,d0
+	add.w	d5,d0
+	move.l	#LevelChunks,d3			; the base again, UNHARMED
+	add.l	d0,d3
+	else
 	subq.b	#1,d3				; Get pointer to block metadata in the chunk
 	andi.w	#$7F,d3
 	ror.w	#7,d3
@@ -222,6 +245,7 @@ GetBlockDataAbsXY:
 	andi.w	#$1E,d5
 	add.w	d4,d3
 	add.w	d5,d3
+	endif
 	movea.l	d3,a0
 
 	move.w	(a0),d3				; Get pointer to block data
@@ -258,6 +282,29 @@ GetBlockMetadata:
 	move.l	#LevelChunks,d3
 	move.b	(a4,d0.w),d3
 
+	if JAGUAR
+; The same LevelChunks alignment bug the collision path had (Collision Floor.asm).
+; Here the base is cleared by `andi.w #$7F,d3` rather than `ext.w`, but the effect
+; is identical: only bits 6:0 survive, so the base's low word is gone.  That is
+; exact only when LevelChunks is 64 KB-aligned, which it is on the Mega CD
+; ($210000) and is NOT in this port ($1611BE) -- widening grew the code ahead of
+; it.  These two sites DRAW THE TILES, so a broken block pointer makes every
+; drawn cell wrong, sky cells included.
+; d0 is dead here: it was the layout index and is not read again until the
+; `moveq #1,d0` that reports success.
+	move.b	d3,d0				; the chunk ID, before the mask eats the base
+	subq.b	#1,d0
+	andi.w	#$7F,d0
+	ror.w	#7,d0
+	andi.l	#$FFFF,d0			; ror.w leaves the high word alone
+	add.w	d4,d4
+	andi.w	#$1E0,d4
+	andi.w	#$1E,d5
+	add.w	d4,d0
+	add.w	d5,d0
+	move.l	#LevelChunks,d3			; the base again, UNHARMED
+	add.l	d0,d3
+	else
 	subq.b	#1,d3				; Get pointer to block metadata in the chunk
 	andi.w	#$7F,d3
 	ror.w	#7,d3
@@ -266,6 +313,7 @@ GetBlockMetadata:
 	andi.w	#$1E,d5
 	add.w	d4,d3
 	add.w	d5,d3
+	endif
 	movea.l	d3,a0
 
 	rts
